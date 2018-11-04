@@ -13,11 +13,7 @@ class Main {
     private val PLAYER01 = '○'
     private val PLAYER02 = '×'
 
-    private val board = Array(
-        new Mass(), new Mass(), new Mass(),
-        new Mass(), new Mass(), new Mass(),
-        new Mass(), new Mass(), new Mass(),
-    )
+    private val board = Array.fill(9)(new Mass())
 
     // 横のマス
     private val holizontal = List(
@@ -45,20 +41,22 @@ class Main {
      * @param mark 判定するマーク
      * @return 勝利の場合、true, そうでなければ、false
      */
-    private def decision(mark: Char): Boolean = {
-        val toMark = (xss: List[List[Mass]]) => xss.map((xs: List[Mass]) => xs.map(x => x.mark))
-        val charToBoolean = (xss: List[List[Char]]) => xss.map((xs: List[Char]) => xs.foldLeft(true)((acc, mass) => acc && (mass == mark)))
-        val res1 = charToBoolean(toMark(holizontal)).foldLeft(false)((mass, acc) => mass || acc)
-        val res2 = charToBoolean(toMark(vertical)).foldLeft(false)((mass, acc) => mass || acc)
-        val res3 = charToBoolean(toMark(diagonal)).foldLeft(false)((mass, acc) => mass || acc)
-        return res1 || res2 || res3
+    private val decision = (mark: Char) => {
+        val directions = List(holizontal, vertical, diagonal)
+
+        // 判定のロジック
+        val functionLogic = (direction: List[List[Mass]]) => {
+            val marks = direction.map(xs => xs.map(x => x.mark))
+            val isParamMarks = marks.map(xs => (true /: xs)((acc, mass) => acc && (mass == mark)))
+            (false /: isParamMarks)((mass, acc) => mass || acc)
+        }
+
+        // 縦、横、斜めの中で引数のマークが並んでいる場合、true
+        (false /: directions.map(functionLogic))((acc, isParamMark) => acc || isParamMark)
     }
 
     /**
-     * (x, y)のところに盤面に石を置く。
-     * すでにコマが置かれている場合を考慮していないから考慮する必要がある。
-     * @param x X座標
-     * @param y Y座標
+     * 標準入力から盤面の位置（0~9）を取得し、任意のマスに引数のマークを付与する。
      */
     private def put(mark: Char): Unit = {
         val enteredString = scala.io.StdIn.readLine
