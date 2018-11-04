@@ -1,0 +1,1 @@
+scalac -bootclasspath /Users/watanabe/.ivy2/cache/org.scala-lang/scala-library/jars/scala-library-2.12.7.jar -classpath /Users/watanabe/Program/GitHub/Scala/tic-tac-toe/target/scala-2.12/classes /Users/watanabe/Program/GitHub/Scala/tic-tac-toe/src/main/scala/Main.scala

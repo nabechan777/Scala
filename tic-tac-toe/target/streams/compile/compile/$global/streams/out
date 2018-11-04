@@ -1,0 +1,9 @@
+[0m[[0m[31merror[0m] [0m[0m/Users/watanabe/Program/GitHub/Scala/tic-tac-toe/src/main/scala/Main.scala:77:32: type mismatch;[0m
+[0m[[0m[31merror[0m] [0m[0m found   : Char[0m
+[0m[[0m[31merror[0m] [0m[0m required: Mass[0m
+[0m[[0m[31merror[0m] [0m[0m                board(index) = mark[0m
+[0m[[0m[31merror[0m] [0m[0m                               ^[0m
+[0m[[0m[31merror[0m] [0m[0m/Users/watanabe/Program/GitHub/Scala/tic-tac-toe/src/main/scala/Main.scala:131:33: Any does not have a constructor[0m
+[0m[[0m[31merror[0m] [0m[0mclass Mass(aMark: Char) extends Any {[0m
+[0m[[0m[31merror[0m] [0m[0m                                ^[0m
+[0m[[0m[31merror[0m] [0m[0mtwo errors found[0m

@@ -1,0 +1,32 @@
+run
+x = List(1,2,3,4,5)
+val x = List(1,2,3,4,5)
+shell
+: shell
+shell
+console
+compile
+help
+help console
+console
+let xs = [1,2,3,4,5]
+console
+compile
+run
+compile
+console
+compile
+run
+compile
+run
+console
+compile
+run
+compile
+run
+compile
+run
+compile
+run
+tun
+run
