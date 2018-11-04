@@ -1,0 +1,13 @@
+products:
+   src/main/scala/Animation01.scala -> build/classes/scala/main/Animation01$.class
+   src/main/scala/Animation01.scala -> build/classes/scala/main/Animation01$delayedInit$body.class
+   src/main/scala/Animation01.scala -> build/classes/scala/main/Animation01.class
+binary dependencies:
+   src/main/scala/Animation01.scala -> /Library/Java/JavaVirtualMachines/jdk-10.0.1.jdk/Contents/Home
+   src/main/scala/Animation01.scala -> /Users/watanabe/.gradle/caches/modules-2/files-2.1/org.scala-lang/scala-library/2.11.12/bf5534e6fec3d665bd6419c952a929a8bdd4b591/scala-library-2.11.12.jar
+source dependencies:
+external dependencies:
+class names:
+   src/main/scala/Animation01.scala -> Animation01
+   src/main/scala/Animation01.scala -> Animation01$
+   src/main/scala/Animation01.scala -> Animation01$delayedInit$body
