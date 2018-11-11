@@ -41,7 +41,7 @@ class Main {
      * @param mark 判定するマーク
      * @return 勝利の場合、true, そうでなければ、false
      */
-    private val decision = (mark: Char) => {
+    private val decision : (Char => Boolean) = mark => {
         val directions = List(holizontal, vertical, diagonal)
 
         // 判定のロジック
@@ -58,35 +58,34 @@ class Main {
     /**
      * 標準入力から盤面の位置（0~9）を取得し、任意のマスに引数のマークを付与する。
      */
-    private def put(mark: Char): Unit = {
+    private val put : (Char => Unit) = mark => {
         val enteredString = scala.io.StdIn.readLine
-        if(enteredString == "q")
+        if(enteredString == "q") {
             scala.sys.exit(1)
-        else {
+        } else {
             val index = enteredString.toInt
-            if(board(index).mark == '-')
+            if (board(index).mark == '-') {
                 board(index).mark = mark
-            else{
+            } else {
                 println("Already entered!!")
                 put(mark)
             }
         }
     }
 
-    private def changePlayer(value: Char): Char = value match {
-            case PLAYER01 => PLAYER02
-            case PLAYER02 => PLAYER01
-            case _ => throw new Exception("Undefined Player!")
+    private val changePlayer : (Char => Char) = value => value match {
+        case PLAYER01 => PLAYER02
+        case PLAYER02 => PLAYER01
+        case _        => throw new Exception("Undefined Player!")
     }
 
-    private def showBoard(): Unit = {
-        val row1 = List(board(0), board(1), board(2))
-        val row2 = List(board(3), board(4), board(5))
-        val row3 = List(board(6), board(7), board(8))
+
+    private val showBoard : (() => Unit) = () => {
+        val row1 = board.slice(0, 3)
+        val row2 = board.slice(3, 6)
+        val row3 = board.slice(6, 9)
         for(row <- List(row1, row2, row3)){
-            for(mass <- row){
-                print(mass.mark + " ")
-            }
+            for(mass <- row) print(mass.mark + " ")
             print("\n")
         }
     }
@@ -96,16 +95,19 @@ class Main {
      * @param player ○か×の文字
      * @return ゲーム終了時のメッセージ
      */
-    private def gameRutine(player: Char): String = {
-        val markList = board.map(mass => mass.mark)
-        val boardIsFull = markList.foldLeft(true)((acc, mark) => (mark != '-') && acc)
-        if(!boardIsFull){
+
+    private val gameRoutine : (Char => String) = player => {
+        val markList = for(mass <- board) yield mass.mark
+        val boardIsFull = (true /: markList)((acc, mark) => (mark != '-') && acc)
+        if (!boardIsFull) {
             put(player)
             showBoard()
-            if(decision(player))
+            if (decision(player)) {
                 player.toString + " is win!!"
-            else
-                gameRutine(changePlayer(player))
+            }else{
+                val nextRoutine = gameRoutine compose changePlayer
+                nextRoutine(player)
+            }
         } else {
             "drow..."
         }
@@ -114,7 +116,7 @@ class Main {
 
     def start(): Unit = {
         println("Game Start!")
-        val message = gameRutine('○')
+        val message = gameRoutine('○')
         println(message)
     }
 }
