@@ -13,11 +13,7 @@ class Main {
     private val PLAYER01 = '○'
     private val PLAYER02 = '×'
 
-    private val board = Array(
-        new Mass(), new Mass(), new Mass(),
-        new Mass(), new Mass(), new Mass(),
-        new Mass(), new Mass(), new Mass(),
-    )
+    private val board = Array.fill(9)(new Mass())
 
     // 横のマス
     private val holizontal = List(
@@ -45,50 +41,51 @@ class Main {
      * @param mark 判定するマーク
      * @return 勝利の場合、true, そうでなければ、false
      */
-    private def decision(mark: Char): Boolean = {
-        val toMark = (xss: List[List[Mass]]) => xss.map((xs: List[Mass]) => xs.map(x => x.mark))
-        val charToBoolean = (xss: List[List[Char]]) => xss.map((xs: List[Char]) => xs.foldLeft(true)((acc, mass) => acc && (mass == mark)))
-        val res1 = charToBoolean(toMark(holizontal)).foldLeft(false)((mass, acc) => mass || acc)
-        val res2 = charToBoolean(toMark(vertical)).foldLeft(false)((mass, acc) => mass || acc)
-        val res3 = charToBoolean(toMark(diagonal)).foldLeft(false)((mass, acc) => mass || acc)
-        return res1 || res2 || res3
+    private val decision : (Char => Boolean) = mark => {
+        val directions = List(holizontal, vertical, diagonal)
+
+        // 判定のロジック
+        val functionLogic = (direction: List[List[Mass]]) => {
+            val marks = direction.map(xs => xs.map(x => x.mark))
+            val isParamMarks = marks.map(xs => (true /: xs)((acc, mass) => acc && (mass == mark)))
+            (false /: isParamMarks)((mass, acc) => mass || acc)
+        }
+
+        // 縦、横、斜めの中で引数のマークが並んでいる場合、true
+        (false /: directions.map(functionLogic))((acc, isParamMark) => acc || isParamMark)
     }
 
     /**
-     * (x, y)のところに盤面に石を置く。
-     * すでにコマが置かれている場合を考慮していないから考慮する必要がある。
-     * @param x X座標
-     * @param y Y座標
+     * 標準入力から盤面の位置（0~9）を取得し、任意のマスに引数のマークを付与する。
      */
-    private def put(mark: Char): Unit = {
+    private val put : (Char => Unit) = mark => {
         val enteredString = scala.io.StdIn.readLine
-        if(enteredString == "q")
+        if(enteredString == "q") {
             scala.sys.exit(1)
-        else {
+        } else {
             val index = enteredString.toInt
-            if(board(index).mark == '-')
+            if (board(index).mark == '-') {
                 board(index).mark = mark
-            else{
+            } else {
                 println("Already entered!!")
                 put(mark)
             }
         }
     }
 
-    private def changePlayer(value: Char): Char = value match {
-            case PLAYER01 => PLAYER02
-            case PLAYER02 => PLAYER01
-            case _ => throw new Exception("Undefined Player!")
+    private val changePlayer : (Char => Char) = value => value match {
+        case PLAYER01 => PLAYER02
+        case PLAYER02 => PLAYER01
+        case _        => throw new Exception("Undefined Player!")
     }
 
-    private def showBoard(): Unit = {
-        val row1 = List(board(0), board(1), board(2))
-        val row2 = List(board(3), board(4), board(5))
-        val row3 = List(board(6), board(7), board(8))
+
+    private val showBoard : (() => Unit) = () => {
+        val row1 = board.slice(0, 3)
+        val row2 = board.slice(3, 6)
+        val row3 = board.slice(6, 9)
         for(row <- List(row1, row2, row3)){
-            for(mass <- row){
-                print(mass.mark + " ")
-            }
+            for(mass <- row) print(mass.mark + " ")
             print("\n")
         }
     }
@@ -98,16 +95,19 @@ class Main {
      * @param player ○か×の文字
      * @return ゲーム終了時のメッセージ
      */
-    private def gameRutine(player: Char): String = {
-        val markList = board.map(mass => mass.mark)
-        val boardIsFull = markList.foldLeft(true)((acc, mark) => (mark != '-') && acc)
-        if(!boardIsFull){
+
+    private val gameRoutine : (Char => String) = player => {
+        val markList = for(mass <- board) yield mass.mark
+        val boardIsFull = (true /: markList)((acc, mark) => (mark != '-') && acc)
+        if (!boardIsFull) {
             put(player)
             showBoard()
-            if(decision(player))
+            if (decision(player)) {
                 player.toString + " is win!!"
-            else
-                gameRutine(changePlayer(player))
+            }else{
+                val nextRoutine = gameRoutine compose changePlayer
+                nextRoutine(player)
+            }
         } else {
             "drow..."
         }
@@ -116,7 +116,7 @@ class Main {
 
     def start(): Unit = {
         println("Game Start!")
-        val message = gameRutine('○')
+        val message = gameRoutine('○')
         println(message)
     }
 }

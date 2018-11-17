@@ -30,3 +30,21 @@ compile
 run
 tun
 run
+console
+compile
+run
+console
+compile
+console
+console help
+console -help
+help
+consoleQ
+consoleQuick
+compile
+run
+7
+compile
+compile -deprecation
+compile
+run
